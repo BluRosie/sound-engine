@@ -507,6 +507,7 @@ SDAT_FILES_DIR := $(SDAT_DIR)/Files
 SDAT_BUILD := $(BUILD_NARC)/gs_sound_data.sdat
 SDAT_TARGET := $(FILESYS)/data/sound/gs_sound_data.sdat
 SDAT_DEPENDENCIES_DIR := sound/cries
+SDAT_RAW_FILE := rawdata/gs_sound_data.sdat
 
 SDAT_SRCS := $(wildcard $(SDAT_DEPENDENCIES_DIR)/*.wav)
 SDAT_SWAR_OBJS := $(patsubst $(SDAT_DEPENDENCIES_DIR)/%.wav,$(SDAT_OBJ_DIR)/WAVARC/WAVE_ARC_PV%/00.swav,$(SDAT_SRCS))

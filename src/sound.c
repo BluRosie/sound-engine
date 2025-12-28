@@ -87,21 +87,21 @@ int LONG_CALL NNSi_SndArcLoadBank(int bankNo, u32 loadFlag, void *heap, BOOL bSe
     int i;
     BOOL loadingNewCry = 0, hasLoadedCry = 0;
 
-    // Get bank information
-    if (bankNo >= CRY_PSEUDOBANK_START || (bankNo < 495 && bankNo > 1)) // assume all cry banks are loading cries
-    {
-        bankInfo = NNS_SndArcGetBankInfo(1);
-        loadingNewCry = 1;
-#ifdef DEBUG_SOUND_SBNK_LOADS
-        u8 buf[200];
-        sprintf(buf, "[NNSi_SndArcLoadBank] Cry load detected for bank %d (Index %d).\n", bankNo, (bankNo >= CRY_PSEUDOBANK_START) ? (bankNo - (CRY_PSEUDOBANK_START - 544)) : bankNo);
-        debugsyscall(buf);
-#endif // DEBUG_SOUND_SBNK_LOADS
-    }
-    else
-    {
-        bankInfo = NNS_SndArcGetBankInfo( bankNo );
-    }
+//    // Get bank information
+//    if (bankNo >= CRY_PSEUDOBANK_START || (bankNo < 495 && bankNo > 1)) // assume all cry banks are loading cries
+//    {
+//        bankInfo = NNS_SndArcGetBankInfo(1);
+//        loadingNewCry = 1;
+//#ifdef DEBUG_SOUND_SBNK_LOADS
+//        u8 buf[200];
+//        sprintf(buf, "[NNSi_SndArcLoadBank] Cry load detected for bank %d (Index %d).\n", bankNo, (bankNo >= CRY_PSEUDOBANK_START) ? (bankNo - (CRY_PSEUDOBANK_START - 544)) : bankNo);
+//        debugsyscall(buf);
+//#endif // DEBUG_SOUND_SBNK_LOADS
+//    }
+//    else
+//    {
+//        bankInfo = NNS_SndArcGetBankInfo( bankNo );
+//    }
 
 #ifdef DEBUG_SOUND_SBNK_LOADS
     if (bankInfo == NULL)
@@ -151,7 +151,7 @@ int LONG_CALL NNSi_SndArcLoadBank(int bankNo, u32 loadFlag, void *heap, BOOL bSe
             sprintf(buf, "[NNSi_SndArcLoadBank] Failed to load waveArc %d using NNS_SndArcGetWaveArcInfo.  There are 0x%x bytes left in the sound heap.\n", waveArcIndex, SoundHeapFreeSize);
             debugsyscall(buf);
 #endif // DEBUG_SOUND_SBNK_LOADS
-            
+
             return NNS_SND_ARC_LOAD_ERROR_INVALID_WAVEARC_NO;
         }
 
