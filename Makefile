@@ -516,13 +516,26 @@ update_machine_moves: $(VENV_ACTIVATE)
 
 
 # sound convenience targets
+SORTED ?= 1
 sdat:
+ifeq ($(SORTED), 0)
+	$(MAKE) -C ../hgss-sdat-manipulator
+else
 	$(MAKE) -C ../hgss-sdat-manipulator sorted
+endif
 	mv ../hgss-sdat-manipulator/gs_sound_data.sdat $(SDAT_RAW_FILE)
 
 
 clean_sdat:
 	$(MAKE) -C ../hgss-sdat-manipulator clean
+
+
+update_sdat:
+ifeq ($(SORTED), 1)
+	$(MAKE) clean_sdat
+endif
+	$(MAKE) sdat
+	$(MAKE)
 
 # needed to keep the $(SDAT_OBJ_DIR)/WAVE_ARC_PV%/00.swav from being detected as an intermediate file
 .SECONDARY:

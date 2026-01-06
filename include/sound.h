@@ -185,6 +185,7 @@ const NNSSndArcWaveArcInfo * LONG_CALL NNS_SndArcGetWaveArcInfo(u32 waveArcIndex
 int LONG_CALL NNSi_SndArcLoadWaveArc(u16 waveArcNo, u32 loadFlag, void *heap, BOOL bSetAddr, SNDWaveArc **waveArc);
 BOOL LONG_CALL LoadSingleWaves(SNDWaveArc *waveArc, SNDBankData *bank, int index, u32 fileId, void *heap);
 void LONG_CALL SND_AssignWaveArc(SNDBankData *bank, int index, SNDWaveArc *waveArc);
+BOOL LONG_CALL NNS_SndArcLoadGroup(int groupNo, void *heap);
 
 void LONG_CALL PlayCry(u16 species, u8 forme);
 void LONG_CALL PlaySE(u32 se);

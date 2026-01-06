@@ -386,6 +386,8 @@ NNS_SndArcGetWaveArcInfo = 0x020C9788;
 NNSi_SndArcLoadWaveArc = 0x020CA194;
 LoadSingleWaves = 0x020CA788;
 SND_AssignWaveArc = 0x020D6154;
+NNS_SndArcLoadGroup = 0x020C9DAC;
+
 
 Fsys_GetWeather_HandleDiamondDust = 0x0203BBB4 | 1;
 sub_0206D038 = 0x0206D038 | 1;

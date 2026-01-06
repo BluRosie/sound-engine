@@ -15,7 +15,8 @@ BOOL LONG_CALL GF_Snd_LoadSeq(int seqNo) {
 #ifdef DEBUG_SOUND_SSEQ_LOADS
     if (!ret)
     {
-        debug_printf("[GF_Snd_LoadSeq] Failed to load song %d.  There are 0x%x bytes left in the sound heap.\n", seqNo, SoundHeapFreeSize);
+        debug_printf("[GF_Snd_LoadSeq] Failed to load song %d (NNS_SndArcLoadSeq).  There are 0x%x bytes left in the sound heap.\n", seqNo, SoundHeapFreeSize);
+        ret = 1;
     }
     else
     {
@@ -38,15 +39,39 @@ BOOL GF_Snd_LoadSeqEx(int seqNo, u32 loadFlag) {
 #ifdef DEBUG_SOUND_SSEQ_LOADS
     if (!ret)
     {
-        debug_printf("[GF_Snd_LoadSeqEx] Failed to load song %d.  There are 0x%x bytes left in the sound heap.\n", seqNo, SoundHeapFreeSize);
+        debug_printf("[GF_Snd_LoadSeqEx] Failed to load song %d (NNS_SndArcLoadSeqEx).  There are 0x%x bytes left in the sound heap.\n", seqNo, SoundHeapFreeSize);
+        ret = 1;
     }
     else
     {
-        debug_printf("[GF_Snd_LoadSeqEx] Loaded song %d.  There are 0x%x bytes left in the sound heap (EX).\n", seqNo, SoundHeapFreeSize);
+        debug_printf("[GF_Snd_LoadSeqEx] Loaded song %d (NNS_SndArcLoadSeqEx).  There are 0x%x bytes left in the sound heap (EX).\n", seqNo, SoundHeapFreeSize);
     }
 #endif // DEBUG_SOUND_SSEQ_LOADS
 
     return ret;
+}
+
+BOOL GF_Snd_LoadGroup(int groupNo) {
+    BOOL ret;
+    struct SND_WORK *work;
+
+    work = GetSoundDataPointer();
+    ret = NNS_SndArcLoadGroup(groupNo, work->heap);
+    GF_SndHeapGetFreeSize();
+
+#ifdef DEBUG_SOUND_SBNK_LOADS
+    if (!ret)
+    {
+        debug_printf("[GF_Snd_LoadGroup] Failed to load group %d (NNS_SndArcLoadGroup).  There are 0x%x bytes left in the sound heap.\n", groupNo, SoundHeapFreeSize);
+        //ret = 1;
+    }
+    else
+    {
+        debug_printf("[GF_Snd_LoadGroup] Loaded group %d (NNS_SndArcLoadGroup).  There are 0x%x bytes left in the sound heap (EX).\n", groupNo, SoundHeapFreeSize);
+    }
+#endif // DEBUG_SOUND_SSEQ_LOADS
+
+return ret;
 }
 
 
@@ -97,7 +122,7 @@ int LONG_CALL NNSi_SndArcLoadBank(int bankNo, u32 loadFlag, void *heap, BOOL bSe
     if (bankInfo == NULL || bankNo == 700)
     {
         GF_SndHeapGetFreeSize();
-        debug_printf("[NNSi_SndArcLoadBank] Failed to load bank %d.  There are 0x%x bytes left in the sound heap.\n", bankNo, SoundHeapFreeSize);
+        debug_printf("[NNSi_SndArcLoadBank] Failed to load bank %d (NNS_SndArcGetBankInfo bankInfo NULL).  There are 0x%x bytes left in the sound heap.\n", bankNo, SoundHeapFreeSize);
     }
 #endif // DEBUG_SOUND_SBNK_LOADS
 
