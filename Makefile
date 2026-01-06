@@ -515,6 +515,15 @@ update_machine_moves: $(VENV_ACTIVATE)
 	@echo "Updated item descriptions and sprites. Double check formatting"
 
 
+# sound convenience targets
+sdat:
+	$(MAKE) -C ../hgss-sdat-manipulator sorted
+	mv ../hgss-sdat-manipulator/gs_sound_data.sdat $(SDAT_RAW_FILE)
+
+
+clean_sdat:
+	$(MAKE) -C ../hgss-sdat-manipulator clean
+
 # needed to keep the $(SDAT_OBJ_DIR)/WAVE_ARC_PV%/00.swav from being detected as an intermediate file
 .SECONDARY:
 
