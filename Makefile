@@ -532,17 +532,22 @@ update_machine_moves: $(VENV_ACTIVATE)
 
 # sound convenience targets
 SORTED ?= 1
+SDAT_MANIP := ../hgss-sdat-manipulator
+
 sdat:
 ifeq ($(SORTED), 0)
-	$(MAKE) -C ../hgss-sdat-manipulator
+	$(MAKE) -C $(SDAT_MANIP)
 else
-	$(MAKE) -C ../hgss-sdat-manipulator sorted
+	$(MAKE) -C $(SDAT_MANIP) sorted
 endif
-	mv ../hgss-sdat-manipulator/gs_sound_data.sdat $(SDAT_RAW_FILE)
+	cp $(SDAT_MANIP)/gs_sound_data.sdat $(SDAT_RAW_FILE)
 
 
+SDAT_VANILLA_FILE := rawdata/og_sound_data.sdat
 clean_sdat:
-	$(MAKE) -C ../hgss-sdat-manipulator clean
+	$(MAKE) -C $(SDAT_MANIP) clean
+	cp $(SDAT_VANILLA_FILE) $(SDAT_MANIP)/gs_sound_data.sdat
+	$(MAKE) -C $(SDAT_MANIP) unpack > $(SDAT_MANIP)/usage.txt
 
 
 update_sdat:
