@@ -5,7 +5,7 @@
 _000:
     UpdateTerrainOverlay FALSE, _045
     CompareVarToValue OPCODE_NEQ, BSCRIPT_VAR_SIDE_EFFECT_TYPE, SIDE_EFFECT_TYPE_ABILITY, _skipAbilityPopup
-    AbilityPopup BATTLER_CATEGORY_MSG_TEMP
+    AbilityPopup BATTLER_CATEGORY_MSG_TEMP, ABILITY_POPUP_MODE_SLIDE_IN
 _skipAbilityPopup:
     GotoIfTerrainOverlayIsType GRASSY_TERRAIN, _019
     GotoIfTerrainOverlayIsType MISTY_TERRAIN, _024
@@ -43,6 +43,9 @@ _034:
 _037:
     Wait
     WaitButtonABTime 30
+    CompareVarToValue OPCODE_NEQ, BSCRIPT_VAR_SIDE_EFFECT_TYPE, SIDE_EFFECT_TYPE_ABILITY, _skipAbilityPopup2
+    AbilityPopup BATTLER_CATEGORY_MSG_TEMP, ABILITY_POPUP_MODE_SLIDE_OUT
+_skipAbilityPopup2:
     UpdateVar OPCODE_FLAG_OFF, BSCRIPT_VAR_BATTLE_STATUS, BATTLE_STATUS_MOVE_ANIMATIONS_OFF
     // restore the mon's current move to the original one
     CompareVarToValue OPCODE_NEQ, BSCRIPT_VAR_SIDE_EFFECT_TYPE, SIDE_EFFECT_TYPE_ABILITY, _049

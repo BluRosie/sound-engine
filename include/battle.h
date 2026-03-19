@@ -1675,6 +1675,11 @@ struct ABILITY_POPUP_WORK {
     u8 step;
 };
 
+#define ABILITY_POPUP_MODE_SLIDE_IN (0)
+#define ABILITY_POPUP_MODE_SLIDE_OUT (1)
+#define ABILITY_POPUP_MODE_SLIDE_BOTH_WAYS (-1)
+
+
 
 //Ability Checks - values for flag for CheckSideAbility
 #define CHECK_ABILITY_SAME_SIDE             0

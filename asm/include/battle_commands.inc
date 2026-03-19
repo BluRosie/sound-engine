@@ -1522,10 +1522,11 @@
     .long \arg_1
     .endm
 
-    .macro AbilityPopup arg_0:req, arg_1=-1
+    .macro AbilityPopup battler:req, mode=-1, ability=-1
     .long 278
-    .long \arg_0
-    .long \arg_1
+    .long \battler
+    .long \mode
+    .long \ability
     .endm
 
     .macro SetCurrentMoveSwitchingStatus arg_0

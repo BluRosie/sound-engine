@@ -4735,6 +4735,7 @@ enum {
     ABILITY_POPUP_INIT,
     ABILITY_POPUP_SLIDE_IN,
     ABILITY_POPUP_WAIT,
+    ABILITY_POPUP_PAUSE_FOR_SCRIPT,
     ABILITY_POPUP_SLIDE_OUT,
     ABILITY_POPUP_DESTROY
 };
@@ -4750,13 +4751,11 @@ enum {
 
 #define ABILITY_POPUP_TEXTBOX_PLAYER_SHIFT (-256 + ABILITY_POPUP_TEXTBOX_FINAL_DESTINATION)
 
-#define ABILITY_POPUP_FRAMES_TO_SHIFT 4
+#define ABILITY_POPUP_FRAMES_TO_SHIFT 8
 #define ABILITY_POPUP_PIXELS_PER_FRAME (ABILITY_POPUP_TEXTBOX_FINAL_DESTINATION / ABILITY_POPUP_FRAMES_TO_SHIFT)
 
 #define ABILITY_POPUP_Y_COORD_PLAYER 8
 #define ABILITY_POPUP_Y_COORD_ENEMY 1
-
-//void AbilityPopup_DrawWindowAtCoordinates(struct Window *window, )
 
 void AbilityPopup_SlideIn(void *data)
 {
@@ -4768,6 +4767,9 @@ void AbilityPopup_SlideIn(void *data)
     void* palette = bsys->palette;
     int side = work->side;
 
+#ifdef DEBUG_ABILITY_POPUP
+    debug_printf("btl_scr_cmd abilitypopup %d\n", work->step);
+#endif
     switch (work->step)
     {
     case ABILITY_POPUP_INIT_PALETTE:
@@ -4823,6 +4825,10 @@ void AbilityPopup_SlideIn(void *data)
         }
         }
         break;
+    case ABILITY_POPUP_PAUSE_FOR_SCRIPT:
+        /* do nothing because this will be incremented in the script command if the mode is properly set */
+        work->step++;
+        //break;
     case ABILITY_POPUP_SLIDE_OUT: {
         int negative = (side == 0 ? -1 : 1);
         int sideShift = (side == 0 ? ABILITY_POPUP_TEXTBOX_PLAYER_SHIFT : 0);
@@ -4849,19 +4855,24 @@ void AbilityPopup_SlideIn(void *data)
 
 BOOL btl_scr_cmd_116_abilitypopup(void* bw, struct BattleStruct* sp)
 {
+    s32 battler;
+    s32 side;
+    s32 mode;
+    s32 ability;
+
 #ifdef DEBUG_ABILITY_POPUP
-    debug_printf("btl_scr_cmd abilitypopup %d\n", sp->battle_progress_flag);
+//    debug_printf("btl_scr_cmd abilitypopup %d\n", sp->battle_progress_flag);
 #endif
+    IncrementBattleScriptPtr(sp, 1);
+    battler = GrabClientFromBattleScriptParam(bw, sp, read_battle_script_param(sp));
+    side = IsClientEnemy(bw, battler);
+    mode = read_battle_script_param(sp);
+    ability = read_battle_script_param(sp);
 
-    if (sp->abilityPopupWork == NULL) {
-        IncrementBattleScriptPtr(sp, 1);
-        {
+    if (sp->abilityPopupWork == NULL) { // if it's NULL, we can't have started anyway
         struct ABILITY_POPUP_WORK *work = sys_AllocMemory(HEAPID_BATTLE_HEAP, sizeof(struct ABILITY_POPUP_WORK));
-        int battler = GrabClientFromBattleScriptParam(bw, sp, read_battle_script_param(sp));
-        int side = IsClientEnemy(bw, battler);
-        int ability = read_battle_script_param(sp);
 
-        sp->skill_seq_no -= 3; // reset position to current command so script does not continue
+        sp->skill_seq_no -= 4; // reset position to current command so script does not continue
 
         if (ability == -1)
             ability = sp->battlemon[sp->battlerIdTemp].ability;
@@ -4874,20 +4885,30 @@ BOOL btl_scr_cmd_116_abilitypopup(void* bw, struct BattleStruct* sp)
         work->frames = 0;
         work->step = ABILITY_POPUP_INIT_PALETTE;
         sp->battle_progress_flag = 1;
-        }
-    } else if (sp->abilityPopupWork != NULL && sp->abilityPopupWork->step >= ABILITY_POPUP_DESTROY) {
-        sys_FreeMemoryEz(sp->abilityPopupWork);
-        sp->abilityPopupWork = NULL;
-        IncrementBattleScriptPtr(sp, 3);
-        sp->battle_progress_flag = 0;
-
-#ifdef DEBUG_ABILITY_POPUP
-        debug_printf("btl_scr_cmd abilitypopup end\n");
-#endif
     } else {
-        AbilityPopup_SlideIn(sp->abilityPopupWork);
-        sp->battle_progress_flag = 1;
-    }
+        if (mode == ABILITY_POPUP_MODE_SLIDE_IN
+         && sp->abilityPopupWork->step == ABILITY_POPUP_PAUSE_FOR_SCRIPT) {
+        /* continue the script if slide in is finished  */
+            sp->battle_progress_flag = 0;
+#ifdef DEBUG_ABILITY_POPUP
+            debug_printf("btl_scr_cmd abilitypopup continue script\n");
+#endif
+        } else if (sp->abilityPopupWork->step >= ABILITY_POPUP_DESTROY) {
+            sys_FreeMemoryEz(sp->abilityPopupWork);
+            sp->abilityPopupWork = NULL;
+            sp->battle_progress_flag = 0;
+#ifdef DEBUG_ABILITY_POPUP
+            debug_printf("btl_scr_cmd abilitypopup end\n");
+#endif
+        } else {
+            /* advance the step here */
+            if (mode != ABILITY_POPUP_MODE_SLIDE_IN && sp->abilityPopupWork->step == ABILITY_POPUP_PAUSE_FOR_SCRIPT)
+                sp->abilityPopupWork->step++;
+            AbilityPopup_SlideIn(sp->abilityPopupWork);
+            sp->skill_seq_no -= 4; // reset position to current command so script does not continue
+            sp->battle_progress_flag = 1;
+        }
+    } 
 
     return FALSE;
 }
